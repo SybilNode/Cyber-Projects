@@ -62,5 +62,4 @@ hash_functions = {
     "sha256": hash_sha256
 }
 
-for algo in algorithm:
-    
+

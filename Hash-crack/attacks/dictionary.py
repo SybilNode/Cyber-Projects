@@ -9,20 +9,22 @@ def dictionary_attack(target_hash: str, algorithm: str, wordlist_path: str, salt
             for line in file:
                 word = line.strip()
                 # Hash the word with the specified algorithm and salt
-                hashed_password = hashlib.new(algorithm, (word + salt).encode()).hexdigest()
+                hashed_password = hash_functions[algorithm](word + salt)
 
                 #compare the hashed password with the target hash
                 if hashed_password == target_hash:
                     return word  # Match found
                     print(f"Match found: {word}")
                     break
-            else: 
+            else:
+                return None  # No match found after iterating through the entire wordlist
                 print("No match found in the wordlist.")
     except FileNotFoundError:
         print(f"Wordlist file not found: {wordlist_path}")
+    except Exception as e:
 
     # TODO: iterate through each word
     # TODO: hash + compare
 
     # TODO: return match or None
-    pass
+        print(f"An error occurred: {e}")
