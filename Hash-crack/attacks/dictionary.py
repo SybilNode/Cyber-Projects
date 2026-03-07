@@ -23,8 +23,4 @@ def dictionary_attack(target_hash: str, algorithm: str, wordlist_path: str, salt
         print(f"Wordlist file not found: {wordlist_path}")
     except Exception as e:
 
-    # TODO: iterate through each word
-    # TODO: hash + compare
-
-    # TODO: return match or None
         print(f"An error occurred: {e}")
