@@ -2,7 +2,6 @@
 import hashlib
 
 
-# hashing.py 
 def hash_md5(data_string: str) -> str:
 
     # Encode string to bytes
