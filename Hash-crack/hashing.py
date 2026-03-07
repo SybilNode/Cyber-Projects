@@ -52,6 +52,10 @@ def verify_hash(guess: str, target_hash: str, algorithm: str, salt: str = "") ->
         raise ValueError("Unsupported hashing algorithm")
     return guess_hash == target_hash
 
+"""sumary_line
+
+
+
 
 algorithm = ["md5", "sha1", "sha256"]
 
@@ -62,3 +66,4 @@ hash_functions = {
 }
 
 
+"""
