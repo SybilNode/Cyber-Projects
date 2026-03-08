@@ -53,7 +53,7 @@ def verify_hash(guess: str, target_hash: str, algorithm: str, salt: str = "") ->
     return guess_hash == target_hash
 
 
-"""sumary_line
+
 algorithm = ["md5", "sha1", "sha256"]
 
 hash_functions = {
@@ -61,4 +61,3 @@ hash_functions = {
     "sha1": hash_sha1,
     "sha256": hash_sha256
 }
-"""

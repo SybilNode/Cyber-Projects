@@ -10,7 +10,6 @@ def parse_arguments():
     # --charset
     # --max-length
     # --salt
-
     parser = argparse.ArgumentParser(description="Hash cracking tool")
     parser.add_argument("--hash", required=True, help="The hash to crack")
     parser.add_argument("--algorithm", required=True, choices=["md5", "sha1", "sha256"], help="Hashing algorithm")
