@@ -14,7 +14,6 @@ Each project links directly to its source code and documentation inside this rep
 
 | Project | Info | What You'll Learn |
 | --- | --- | --- |
-## Beginner Projects
 | **[Keylogger](./Keylogger)** Capture keyboard events with timestamps | ![Time](https://img.shields.io/badge/⏱️_3–4_hours-8A2BE2?style=flat-square) ![Python](https://img.shields.io/badge/Python-4B8BBE?logo=python&logoColor=white) ![Beginner](https://img.shields.io/badge/Beginner-3CB371) | Event handling • Logging • File I/O • Timestamps<br>[Source Code](./Keylogger) |
 | **[Log Analyzer](./Log-analyzer)** Parse and analyze log files | ![Time](https://img.shields.io/badge/⏱️_4–5_hours-8A2BE2?style=flat-square) ![Python](https://img.shields.io/badge/Python-4B8BBE?logo=python&logoColor=white) ![Beginner](https://img.shields.io/badge/Beginner-3CB371) | Log parsing • Pattern detection • CLI/Flask app structure<br>[Source Code](./Log-analyzer) |
 | **[Network Traffic Analyzer](./Network-traffic-analyzer)** Capture and analyze network packets | ![Time](https://img.shields.io/badge/⏱️_6–7_hours-8A2BE2?style=flat-square) ![Python](https://img.shields.io/badge/Python-4B8BBE?logo=python&logoColor=white) ![Beginner](https://img.shields.io/badge/Beginner-3CB371) | Packet capture • Protocol analysis • Traffic patterns<br>[Source Code](./Network-traffic-analyzer) |
