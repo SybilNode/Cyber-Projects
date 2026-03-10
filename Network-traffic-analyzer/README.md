@@ -13,8 +13,8 @@ bandwidth sampling, and kernel-level BPF filtering.
 <p>Full documentation is available in the <code>/docs</code> folder:</p>
 
 <ul>
-  <li><a href="./docs/04-IMPLEMENTATION.md">04 – Implementation</a></li>
-  <li><a href="./docs/05-CHALLENGES.md">05 – Challenges & Future Work</a></li>
+  <li><a href="./docs/04-IMPLEMENTATION.md">01 – Implementation</a></li>
+  <li><a href="./docs/OVERVIEW.md">02 - Overview</a></li>
 </ul>
 
 <hr />
