@@ -3,11 +3,6 @@
 A collection of hands‑on cybersecurity projects.  
 Each project links directly to its source code and documentation inside this repository.
 
-![stars](https://img.shields.io/github/stars/SybilNode/Cybersecurity-Projects?style=flat-square)
-![forks](https://img.shields.io/github/forks/SybilNode/Cybersecurity-Projects?style=flat-square)
-![issues](https://img.shields.io/github/issues/SybilNode/Cybersecurity-Projects?style=flat-square)
-![license](https://img.shields.io/github/license/SybilNode/Cybersecurity-Projects?style=flat-square)
-
 ![projects](https://img.shields.io/badge/Cybersecurity-Projects-blue?style=for-the-badge&logo=target)
 ![python](https://img.shields.io/badge/Python-Primary_Language-yellow?style=for-the-badge&logo=python)
 
