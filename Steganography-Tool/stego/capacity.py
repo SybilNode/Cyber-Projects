@@ -6,7 +6,7 @@ def calculate_capacity(image):
 
 def required_capacity(message_bytes):
     """Calculate the number of bits required to hide the message."""
-    return len(message_bytes) * 8  # Each byte is 8 bits
+    return 32 + len(message_bytes) * 8  # Each byte is 8 bits
 
 if __name__ == "__main__":
     from image_utils import load_image
