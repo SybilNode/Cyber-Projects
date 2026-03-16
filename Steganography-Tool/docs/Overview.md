@@ -1,181 +1,167 @@
 # Technical Overview
 
-This document explains the core concepts behind LSB steganography and the image-processing
-principles required to understand how this project works internally.
-
-If you're new to this topic, read this first — everything in `encoding_and_decoding.md`
-and `cli_and_usage_details.md` builds on what's covered here.
+This document explains the core concepts behind LSB steganography and the image formats
+that make it possible.
 
 ---
 
 ## Steganography vs. Cryptography
 
-These are two different approaches to protecting a secret, and understanding the distinction
-matters before diving into how this project works.
+Cryptography is encrypting a message in plain sight — even if everyone knows the message
+has been sent, they can't figure out what it means.
 
-**Cryptography** encrypts a message so that even if everyone knows a message was sent,
-they can't figure out what it means. The existence of the message is visible — only its
-contents are hidden.
-
-**Steganography** goes a step further. We're not just scrambling the message — we're
-**hiding the fact that it's even there in the first place.**
-
-Think of it like writing with invisible ink. Only the person receiving it knows to look.
-Anyone else seeing the carrier (an image, a document, an audio file) has no reason to
-suspect it contains anything at all.
-
-This project uses **digital image steganography** — specifically, the LSB technique applied
-to PNG and BMP image files.
-
-> For maximum security, this project supports combining both approaches: hiding a message
-> using steganography *and* encrypting it with a password before embedding. See
-> `encoding_and_decoding.md` for how these two layers interact.
+In steganography, we're hiding the fact that it's even there in the first place. Like
+writing a message with invisible ink — only the person receiving this message would know,
+and unbeknownst to anyone else reading it, the recipient can read the secret message.
 
 ---
 
-## Pixels and RGB
+## Least Significant Bit (LSB)
 
-Digital images are composed of pixels arranged in a rectangular grid. Each pixel holds
-color information represented by three channels: **Red**, **Green**, and **Blue** (RGB).
-Each channel is stored as an integer between 0 and 255. Together, those three values
-determine the exact color of that pixel.
+The most simple form of steganography is LSB, or "Least Significant Bit". It refers to
+the rightmost bit in a binary number representation. Holding the lowest value, it's the
+bit with the least amount of weight in a binary number. So we can change this bit to
+contain our encoded message and have a near imperceptible change on the actual image
+visually.
 
-A pixel with values `(255, 0, 0)` is pure red. `(0, 0, 0)` is black. `(255, 255, 255)` is white.
-
----
-
-## Binary, Bits, and Bytes
-
-Computers store all data — text, images, everything — as binary: sequences of 0s and 1s.
-
-- A single binary digit is a **bit**
-- Eight bits form a **byte**
-- One byte can represent 256 different values (0–255)
-
-Before a text message can be embedded into an image, it must be converted to a flat
-stream of bits:
-```
-"A"  →  ASCII 65  →  01000001
-"Hi" →  "H" (72) + "i" (105)
-     →  01001000  01101001
-```
-
-That flat stream of bits is what gets written into image pixels, one bit at a time.
+We'll change the last bit or last two bits of every byte in an image. Every byte has 8
+bits, so changing the last two will keep the remaining six from the legitimate image —
+and the two we changed carry our secret message.
 
 ---
 
-## The Least Significant Bit (LSB)
+## Image File Formats
 
-In any binary number, the **least significant bit** is the rightmost bit. It carries the
-lowest value — flipping it changes the number by at most 1.
-```
-11001010  =  202
-11001011  =  203  ← only the LSB changed; value shifted by 1
-```
+For LSB steganography to work we need:
 
-In an RGB channel where values range from 0–255, a change of 1 is completely invisible to
-the human eye. This is the core property that makes LSB steganography possible — we can
-overwrite the rightmost bit of each color channel to carry our hidden data, and the image
-looks identical to the original.
+- **Predictable, stable pixel data.** Whatever you write into the pixels should come back
+  exactly as written when you save and reopen the image.
+- **No lossy compression.** A data encoding method that significantly reduces file sizes
+  will scramble those least significant bits.
+
+### BMP (Bitmap)
+
+Provides uncompressed, raw pixel data.
+
+- What you see in the file is basically the pixel array (plus a header).
+- If you flip a bit in the pixel data and save, it stays flipped — perfect for LSB.
+
+### PNG (Portable Network Graphics)
+
+A raster image format known for lossless compression.
+
+- The pixel data is compressed, but when decompressed, you get **exactly** the same bits
+  you started with.
+- So your hidden bits survive saving and reopening.
+
+### JPEG (Joint Photographic Experts Group)
+
+The most popular and widely used lossy compression format for digital images.
+
+- Uses DCT (Discrete Cosine Transform) and quantization, which throws away "unimportant"
+  detail.
+- Those least significant bits you carefully modified are exactly the kind of detail JPEG
+  destroys or changes.
+- Result: your hidden message gets corrupted or completely lost.
+
+**Core idea: BMP/PNG preserve your exact pixel bits; JPEG does not.**
+
+---
+
+## How Pixel Data is Stored in BMP
+
+**Structure (simplified):**
+
+- File header (metadata: size, dimensions, etc.)
+- DIB header (more metadata)
+- Optional color table (for indexed images)
+- Pixel array (this is what you care about)
+
+**Pixel array:**
+
+- Typically stored as BGR or BGRA (Blue, Green, Red, Alpha) per pixel.
+- Often stored bottom-up (first row in file is the bottom row of the image).
+- Each channel is usually 8 bits.
+- So a pixel might look like:
+  - Blue: b7 b6 b5 b4 b3 b2 b1 b0
+  - Green: g7 g6 g5 g4 g3 g2 g1 g0
+  - Red: r7 r6 r5 r4 r3 r2 r1 r0
+- LSB stego: you tweak b0, g0, r0 to encode your message bits.
 
 ---
 
 ## Bitmap Images and Color Depth
 
-A **bitmap** is a rectangular grid of pixels. Bitmaps are defined by two parameters:
-the **number of pixels** (dimensions) and the **color depth** (how much information each
-pixel stores).
+A bitmap is a rectangular grid of cells called pixels. Each pixel contains a color value.
+They are characterized by only two parameters: the number of pixels, and the information
+content or color depth per pixel.
 
-### 1-bit (Black & White)
+### 1-bit (Black and White)
 
-The smallest possible color depth. Each pixel is stored in a single bit:
-- `0` = black
-- `1` = white
+This is the smallest possible information content that can be held for each pixel. The
+resulting bitmap is referred to as monochrome or black and white. Pixels with a 0 are
+black, pixels with a 1 are white.
 
-No shades in between — purely monochrome.
+### 8-bit Greyscale
 
-### 8-bit Grayscale
-
-Each pixel uses 1 byte (8 bits), giving 256 possible shades of gray.
-- `0` = black  
-- `127` = 50% gray  
-- `255` = white
+Each pixel takes 1 byte (8 bits) of storage, resulting in 256 different states. A value
+of 0 is normally black, 255 is white, and 127 would be a 50% grey value. It's most
+common to map the levels from 0–255 onto a 0–1 scale, but some programs will map it onto
+a 0–65535 scale.
 
 ### 24-bit RGB
 
-The standard for full-color images. Each pixel uses 3 bytes — one per channel (R, G, B).
+There are 8 bits allocated to each red, green, and blue component. For each component,
+the value 0 refers to no contribution to that color and a value of 255 would be a fully
+saturated contribution. Since each component has 256 different states there are a total
+of 16,777,216 possible colours.
 
-- Each channel: `0` (no contribution) → `255` (fully saturated)
-- Total possible colors: 256 × 256 × 256 = **16,777,216**
+- Previously 8-bit grayscale had only 256 shades, whereas 24-bit RGB has 256 shades of
+  red × 256 shades of blue × 256 shades of green = 256³ = 16,777,216
 
 ![24-bit RGB channel breakdown](./rgb_24bit_components.png)
 
-RGB color space can also be visualized as a cube:
+RGB colour space is a fundamental concept in computer graphics. In RGB space any colour
+is represented as a point inside a colour cube with orthogonal axes r, g, b.
 
 ![RGB color cube](./rgb_color_cube.png)
 
 ### 16-bit RGB
 
-Uses 5 bits per color channel with a 1-bit alpha channel.
+This is generally a direct system with 5 bits per colour component and a 1-bit alpha
+channel.
 
 ![16-bit RGB bit layout](./rgb_16bit_layout.png)
 
-### 32-bit RGBA
+### 32-bit RGB
 
-Same as 24-bit RGB, with an extra 8-bit **alpha channel**.
+This is normally the same as 24-bit colour but with an extra 8-bit bitmap known as an
+alpha channel. This channel can be used to create masked areas or represent transparency.
 
 ![32-bit RGBA channel layout](./rgb_32bit_alpha_channel.png)
-
-> **Note:** Images are loaded and processed in **RGB mode** (24-bit, no alpha).  
-> Any alpha channel present in the source file is discarded on load.
-
----
-
-## How BMP Stores Pixel Data
-
-Understanding BMP's internal structure helps explain why it's compatible with steganography
-and how this project interacts with pixel memory.
-
-**BMP file structure (simplified):**
-1. File header  
-2. DIB header  
-3. Optional color table  
-4. **Pixel array**
-
-**Pixel array details:**
-- Stored as **BGR** (Blue, Green, Red)  
-- Often stored **bottom-up**  
-- Each channel is 8 bits  
-
-A single 24-bit pixel broken down to its bits:
-```
-Blue:  b7 b6 b5 b4 b3 b2 b1 [b0]
-Green: g7 g6 g5 g4 g3 g2 g1 [g0]
-Red:   r7 r6 r5 r4 r3 r2 r1 [r0]
-```
-
-The bracketed bits (`b0`, `g0`, `r0`) are the LSBs — the three bits per pixel that carry
-our hidden message.
-
----
-
-## Lossless vs. Lossy Image Formats
-
-### ✅ PNG — Recommended  
-### ✅ BMP — Also supported  
-### ❌ JPEG — Never use this
-
-JPEG destroys LSBs during compression, corrupting hidden data.
-
-> **Core rule:** BMP and PNG preserve your exact pixel bits. JPEG does not.
 
 ---
 
 ## Resolution
 
-Resolution determines the physical size of a bitmap. Pixels themselves have no size — resolution
-defines how many pixels fit into a physical inch.
+Resolution determines the final size of a bitmap, because otherwise pixels inherently
+don't have a size — just data for color values and the number of pixels. Typically
+measured in pixels per inch (PPI) but could be measured with any unit of measurement. On
+devices with non-square pixels the resolution may be specified as two numbers, the
+horizontal and vertical resolution.
+
+**Common measurements:**
+
+- PPI (pixels per inch) for screens
+- DPI (dots per inch) for printers
+
+If you choose:
+
+- **100 PPI** → 100 pixels fit into one inch
+- **200 PPI** → 200 pixels fit into one inch (pixels are smaller)
 
 ![Resolution PPI comparison](./resolution_ppi_diagram.png)
 
-Resolution does **not** affect steganographic capacity or hidden data.
+Resolution being independent of the information content in bitmaps is a fundamental
+concept. Since resolution determines the size of a pixel, it can also be used to modify
+the size of the overall image.

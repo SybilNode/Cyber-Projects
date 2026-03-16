@@ -1,7 +1,7 @@
 # Encoding and Decoding Pipeline
 
-This document describes how messages are embedded into and extracted from images using the LSB
-technique.
+This document describes how messages are embedded into and extracted from images using the
+LSB technique.
 
 ---
 
@@ -26,8 +26,11 @@ technique.
 
 ## Capacity Calculation
 
-Each pixel provides 3 bits of storage (one per RGB channel).  
-The total capacity is: capacity_bits = width × height × 3
+Each pixel provides 3 bits of storage (one per RGB channel).
+
+```
+capacity_bits = width × height × 3
+```
 
 The message must fit within this limit, including the 32-bit length prefix.
 
@@ -35,5 +38,6 @@ The message must fit within this limit, including the 32-bit length prefix.
 
 ## Encryption (Optional)
 
-If a password is provided, the message is encrypted before embedding.  
-This ensures that even if someone extracts the hidden bits, they cannot read the message without the correct password.
+If a password is provided, the message is encrypted before embedding. This ensures that
+even if someone extracts the hidden bits, they cannot read the message without the correct
+password.
