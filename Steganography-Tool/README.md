@@ -77,41 +77,6 @@ python -c "from PIL import Image; print('Pillow installed successfully')"
 
 ---
 
-## Usage
-
-> **Note:** CLI commands below reflect the intended interface. Full dispatch is being wired in.
-
-### Encode a message into an image
-```bash
-python cli.py encode input.png output.png "Your secret message"
-```
-
-### Encode with password protection
-```bash
-python cli.py encode input.png output.png "Your secret message" --password mypassword
-```
-
-### Decode a message from an image
-```bash
-python cli.py decode output.png
-```
-
-### Decode a password-protected message
-```bash
-python cli.py decode output.png --password mypassword
-```
-
-**Arguments:**
-
-| Argument | Description |
-|---|---|
-| `input.png` | Path to the original image (PNG or BMP) |
-| `output.png` | Path to save the encoded image |
-| `"message"` | The text to hide |
-| `--password` | Optional. Encrypts the message before embedding |
-
----
-
 ## Project Structure
 
 ```
@@ -128,40 +93,17 @@ lsb-steganography/
 └── requirements.txt # Project dependencies
 ```
 
-### How the modules connect
-
-```
-cli.py
-  └── encoder.py / decoder.py      ← orchestrates the pipeline
-        ├── capacity.py             ← validates message fits before embedding
-        ├── crypto.py               ← encrypts/decrypts if password provided
-        ├── lsb.py                  ← reads/writes bits at the pixel level
-        └── image_utils.py          ← loads and saves images via Pillow
-```
-
 ---
 
-## How the Pipeline Works Internally
+## Documentation
 
-**Encoding:**
-1. Convert the message string to bytes (`UTF-8`)
-2. Optionally encrypt the bytes using the provided password
-3. Convert bytes to a flat stream of bits
-4. Prepend a 32-bit header encoding the message length
-5. Iterate pixels left-to-right, top-to-bottom, writing one bit per channel (R, G, B)
-6. Save the modified image as PNG or BMP
+Full documentation lives in the `/docs` folder:
 
-**Decoding:**
-1. Read the first 32 bits from the image to determine message length
-2. Extract that many bits from the subsequent pixels
-3. Reassemble bits into bytes, then decode back to a string
-4. Optionally decrypt using the provided password
-
-**Capacity formula:**
-```
-max_bits  = width × height × 3
-required  = 32 + (message_length_in_bytes × 8)
-```
+| File | What's inside |
+|---|---|
+| [`docs/technical_overview.md`](./docs/technical_overview.md) | Pixels, RGB, binary, LSB, color depth, image formats, BMP internals |
+| [`docs/encoding_and_decoding.md`](./docs/encoding_and_decoding.md) | Full pipeline walkthrough, capacity formula, encryption, bitstream integrity |
+| [`docs/cli_and_usage_details.md`](./docs/cli_and_usage_details.md) | Commands, flags, workflows, troubleshooting, learning resources |
 
 ---
 
