@@ -6,6 +6,9 @@ def calculate_capacity(image):
 
 def required_capacity(message_bytes):
     # TODO: Update the docstring to explicitly require `message_bytes` to be a bytes
+
+    
+
     # object (not a str). Consider adding an assertion to enforce this at runtime.
     # This prevents incorrect capacity calculations caused by UTF‑8 multi‑byte
     # characters, where len(string) != len(string.encode('utf-8')).
@@ -14,15 +17,15 @@ def required_capacity(message_bytes):
         raise TypeError("message_bytes must be a bytes object")
 
 
-    """Calculate the number of bits required to hide the message."""
-    return 32 + len(message_bytes) * 8  # Each byte is 8 bits
-
-
-    check_fits(image, message_bytes):
-    capacity = calculate_capacity(image)
-    required = required_capacity(message_bytes)
-    if required > capacity:
-        raise CapacityError(f"Message requires {required} bits")
+        """Calculate the number of bits required to hide the message."""
+        return 32 + len(message_bytes) * 8  # Each byte is 8 bits
+    
+    
+    def check_fits(image, message_bytes):
+        capacity = calculate_capacity(image)
+        required = required_capacity(message_bytes)
+        if required > capacity:
+            raise CapacityError(f"Message requires {required} bits")
 
 
 if __name__ == "__main__":

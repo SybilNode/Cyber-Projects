@@ -15,7 +15,7 @@ def encode_message(image, message, password=None):
 
     if isinstance(image, str):
         image = load_image(image)   
-    
+        
 
 
     # TODO: Add step 1 — convert message string to bytes using message.encode('utf-8').
