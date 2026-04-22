@@ -17,7 +17,6 @@ def encode_message(image, message, password=None):
         image = load_image(image)   
         
 
-
     # TODO: Add step 1 — convert message string to bytes using message.encode('utf-8').
     # Learn about str.encode() and why UTF-8 matters for non-ASCII characters
     # (see recommended resources from earlier analysis).
