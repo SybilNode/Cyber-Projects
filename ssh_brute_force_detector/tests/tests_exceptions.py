@@ -1,6 +1,6 @@
 import pytest
 
-from sshblock.exceptions import (
+from ssh_brute_force_detector.src.sshblock.exceptions import (
     ConfigError,
     FirewallError,
     LogParseError,

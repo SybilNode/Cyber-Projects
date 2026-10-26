@@ -2,7 +2,7 @@
 
 import typer
 
-from sshblock import __version__
+from ssh_brute_force_detector.src.sshblock import __version__
 
 app = typer.Typer(
     help="SSH brute force detector (educational).",
